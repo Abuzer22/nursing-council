@@ -80,6 +80,22 @@ export default function Dashboard() {
     fetchData();
   };
 
+  // ================= DELETE USER =================
+  const handleDeleteUser = async (id: string) => {
+    if (!confirm("Delete this registered user?")) return;
+
+    await deleteDoc(doc(db, "registrations", id));
+    fetchData();
+  };
+
+  // ================= DELETE MESSAGE=================
+  const handleDeleteMessage = async (id: string) => {
+    if (!confirm("Delete this message?")) return;
+
+    await deleteDoc(doc(db, "messages", id));
+    fetchData();
+  };
+
   return (
     <div className="min-h-screen flex bg-gray-100">
 
@@ -190,6 +206,12 @@ export default function Dashboard() {
                 {msg.status === "replied" && (
                   <div className="mt-4 bg-blue-300 p-4 rounded-lg text-blue-900">
                     <strong>Reply:</strong> {msg.reply}
+                    <button
+                    onClick={() => handleDeleteMessage(msg.id)}
+                    className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-800 ml-2"
+                  >
+                    Delete
+                  </button>
                   </div>
                 )}
               </div>
@@ -214,19 +236,41 @@ export default function Dashboard() {
                       <th className="p-3 text-left">Name</th>
                       <th className="p-3 text-left">Email</th>
                       <th className="p-3 text-left">Event Title</th>
-                      <th className="p-3 text-left">Date</th>  
+                      <th className="p-3 text-left">Date</th>
+                      <th className="p-3 text-left">Course Name</th>
+                      <th className="p-3 text-left">Course Year</th>
+                      <th className="p-3 text-left">Contact</th>
+                      <th className="p-3 text-left">Action</th> 
+
                     </tr>
                   </thead>
-                  <tbody>
-                    {users.map((user) => (
-                      <tr key={user.id} className="border-t hover:bg-gray-500">
-                        <td className="p-3">{user.name || "N/A"}</td>
-                        <td className="p-3">{user.email}</td>
-                        <td className="p-3">{user.eventTitle || "N/A"}</td>
-                        <td className="p-3">{user.createdAt ? new Date(user.createdAt.seconds * 1000).toLocaleString(): "N/A"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
+                    <tbody>
+                      {users.map((user) => (
+                        <tr key={user.id} className="border-t hover:bg-gray-500 transition">
+                          <td className="p-3">{user.name || "N/A"}</td>
+                          <td className="p-3">{user.email}</td>
+                          <td className="p-3">{user.eventTitle || "N/A"}</td>
+                          <td className="p-3">
+                            {user.createdAt
+                              ? new Date(user.createdAt.seconds * 1000).toLocaleString()
+                              : "N/A"}
+                          </td>
+                          <td className="p-3">{user.course || "N/A"}</td>
+                          <td className="p-3">{user.courseYear || "N/A"}</td>
+                          <td className="p-3">{user.contact || "N/A"}</td>
+
+                          {/* 🔴 DELETE BUTTON */}
+                          <td className="p-3">
+                            <button
+                              onClick={() => handleDeleteUser(user.id)}
+                              className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-800"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
                 </table>
               </div>
             )}
